@@ -205,4 +205,9 @@ git commit -m 'a message about your commit'
 git push heroku master
 ````
 
+That's all there is to it!!! :)
 
+##Connect
+
+* Twitter: [@clintcabanero](http://twitter.com/clintcabanero)
+* GitHub: [ccabanero](http:///github.com/ccabanero)
