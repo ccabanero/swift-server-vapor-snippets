@@ -122,6 +122,12 @@ In Xcode, re-run the App.  Open your browser and navigate to [http://localhost:8
 
 ![icon](imgs/dirtyresponse.png)
 
+At this point, Play with routing with Vapor.  Here are some relevant sections of the docs to get started:
+
+* [Routing Basics](https://vapor.github.io/documentation/routing/parameters.html)
+* [Route Parameters](https://vapor.github.io/documentation/routing/parameters.html)
+* [Query Parameters](https://vapor.github.io/documentation/routing/query-parameters.html)
+
 ##Create a RESTful Web Service
 
 In this section we are going to create a RESTful web service that will allow client Apps (iOS, Android, or Web) to fetch a collection of Brew Pubs in Seattle, WA.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
