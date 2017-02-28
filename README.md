@@ -181,7 +181,7 @@ In this section we are going to create a RESTful web service that will allow cli
 
 The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
 
-##### Step 1: Install PostgreSQL on macOS
+#### Step 1: Install PostgreSQL on macOS
 
 We will install PostgreSQL on our Mac using Homebrew.  
 
@@ -231,7 +231,7 @@ brew services start postgresql
 
 If you prefer to work with PostgreSQL using a database GUI, then install [PgAdmin](https://www.pgadmin.org/download/macos4.php).  This quick-start will use PgAdmin.
 
-##### Step 2: Create a Beer Database and BrewPub Table in Postgresql
+#### Step 2: Create a Beer Database and BrewPub Table in Postgresql
 
 
 Open pgAdmin, create a server and connect with:
@@ -265,11 +265,11 @@ Your pgAdmin UI should resemble the following:
 
 ![icon](img/pgadmintable.png)
 
-##### Step 3: Create a BrewPub Model
+#### Step 3: Create a BrewPub Model
 
 *In Progress*
 
-##### Step 4: Create the BrewPub Routes
+#### Step 4: Create the BrewPub Routes
 
 *In Progress*
 
@@ -277,9 +277,9 @@ Your pgAdmin UI should resemble the following:
 
 You can deploy your Vapor-powered Swift Server to many cloud services.  In this section we use Heroku.
 
-#####Step 1: Sign Up for [Free Heroku Account here](https://www.heroku.com)
+#### Step 1: Sign Up for [Free Heroku Account here](https://www.heroku.com)
 
-#####Step 2: Install the Heroku Command Line Interface (CLI)
+#### Step 2: Install the Heroku Command Line Interface (CLI)
 
 Now, install the [Heroku Command Line Interface (CLI)](https://devcenter.heroku.com/articles/heroku-cli) with:
 
@@ -292,7 +292,7 @@ Then, confirm the Heroku CLI installation with:
 heroku --version
 ````
 
-#####Step 3: Deploy to Heroku
+#### Step 3: Deploy to Heroku
 
 If your Vapor project is not yet under source control, create a local git repository for it using the following in Terminal:
 
