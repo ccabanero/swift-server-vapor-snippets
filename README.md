@@ -74,7 +74,7 @@ Open a web browser and navigate to http://localhost:8080 . You should see it wor
 
 ##Routing Basics
 
-In this section, we're going to send some static JSON through a URL (i.e. route).
+In this section, we're going to send some static JSON through a route.  Along the way we'll learn some routing basics such as how to handle simple GET and POST requests.
 
 In Xcode, navigate to /Sources/App/Main.swift and edit it as:
 
@@ -166,7 +166,7 @@ When we GET request __http://localhost:8080/brewpub/list__ we see the JSON respo
 When we GET request __http://localhost:8080/brewpub/1__ we see a message that processes the input Id (i.e. integer of 1).  Note, in a future section we will use this Id to look up a brewpub from the database and return that brewpub's data in a JSON response.
 ![icon](img/basics_getint.png)
 
-When we POST request __http://localhost:8080/brewpub/1__ we see a message that processes the passed in parameters.  Note, in a future section we will use the input parameter data to create a new brew pub record in the database and return a status message (e.g. success) in the response.
+When we POST request __http://localhost:8080/brewpub__ we see a message that processes the passed in parameters.  Note, in a future section we will use the input parameter data to create a new brew pub record in the database and return a status message (e.g. success) in the response.
 ![icon](img/basics_post.png)
 
 At this point, play with Routing with Vapor.  Here are some relevant sections of the docs to get started:
@@ -181,7 +181,7 @@ In this section we are going to create a RESTful web service that will allow cli
 
 The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
 
-##### Step 1: Install PostgreSQL
+##### Step 1: Install PostgreSQL on macOS
 
 We will install PostgreSQL on our Mac using Homebrew.  
 
@@ -209,18 +209,67 @@ Install PostgreSQL with:
 brew install postgresql
 ````
 
-If this is your first install, create a database with:
+Create a new database cluster with:
 
 ````
 initdb /usr/local/var/postgres -E utf8
 ````
 
- 
-##### Step 2: Create a BrewPub Model
+Create a postgres user:
+
+````
+/usr/local/Cellar/postgresql/<version>/bin/createuser -s postgres
+e.g.
+/usr/local/Cellar/postgresql/9.6.2/bin/createuser -s postgres
+````
+
+Start Postgresql with:
+
+````
+brew services start postgresql
+````
+
+If you prefer to work with PostgreSQL with a database GUI, then install [PgAdmin](https://www.pgadmin.org/download/macos4.php).  This tutorial will use PgAdmin.p
+
+##### Step 2: Create a Beer Database and BrewPub Table in Postgresql
+
+
+Open pgAdmin, create a server and connect with:
+
+* host: localhost 
+* user name: postgres
+
+Create a __beer__ database:
+
+````
+CREATE DATABASE beer
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+````
+
+Create a __brewpubs__ table:
+
+````
+CREATE TABLE public.brewpubs
+(
+    id bigint,
+    name text,
+    lat double precision,
+    lng double precision,
+    PRIMARY KEY (id)
+)
+````
+
+Your pgAdmin UI should resemble the following:
+
+![icon](img/pgadmintable.png)
+
+##### Step 3: Create a BrewPub Model
 
 *In Progress*
 
-##### Step 3: Create the BrewPub Routes
+##### Step 4: Create the BrewPub Routes
 
 *In Progress*
 
