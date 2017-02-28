@@ -177,7 +177,7 @@ At this point, play with Routing with Vapor.  Here are some relevant sections of
 
 ##Create an API
 
-In this section we are going to create a RESTful web service that will allow client Apps (iOS, Android, or Web) to fetch a collection of Brew Pubs in Seattle, WA.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  
+In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  Being a RESTful web service, we will later demonstrate how to consume this data in multiple platforms such as Apple (iOS, watchOS, tvOS, macOS), Android apps, and Web apps.
 
 The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
 
