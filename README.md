@@ -2,7 +2,7 @@
 
 Server Side __Swift__ code snippets using __Vapor__.
 
-![icon](imgs/vapor.png)
+![icon](img/vapor.png)
 
 
 ##Setup your Development Environment
@@ -46,7 +46,7 @@ vapor new swiftserver
 
 Observe that the Vapor Toolbox scaffolds a Project folder structure for us (see below):
 
-![icon](imgs/scaffolding.png)
+![icon](img/scaffolding.png)
 
 Now, let's create an Xcode project so that we can view and maintain our project files using the Xcode IDE.  
 
@@ -57,22 +57,22 @@ cd swiftserver
 vapor xcode
 ````
 
-When prompted to open the Xcode project go ahead and do so.  Examine the following files in particular:
+When prompted to open the Xcode project go ahead and do so.  
+
+Review the directory structure of the Project - explained here in the [Vapor Docs](https://vapor.github.io/documentation/guide/folder-structure.html). Examine the following files in particular:
 
 * /Package.swift
 * /Sources/App/main.swift
 
-Review the directory structure of the Project - explained here in the [Vapor Docs](https://vapor.github.io/documentation/guide/folder-structure.html).
-
 Before moving forward, run the Vapor project to make sure everything works.  In Xcode, choose the *App* target and Run (see below):
 
-![icon](imgs/runfirst.png)
+![icon](img/runfirst.png)
 
 Open a web browser and navigate to http://localhost:8080 . You should see it works ...
 
-![icon](imgs/works.png)
+![icon](img/works.png)
 
-##Quick and Dirty
+##Get Your Feet Wet
 
 In this section, we're going to send some static JSON through a URL (i.e. route).
 
@@ -85,8 +85,8 @@ let drop = Droplet()
 
 drop.get { req in
     return try drop.view.make("welcome", [
-    	"message": drop.localization[req.lang, "welcome", "title"]
-    ])
+        "message": drop.localization[req.lang, "welcome", "title"]
+        ])
 }
 
 // Add This ...
@@ -94,22 +94,27 @@ drop.get("brewpubs") { req in
     
     var brewpub1 = JSON([
         "name": "Peddler Brewing Company",
-        "lat": "47.663870",
-        "lng": "-122.377095"
+        "lat": 47.663870,
+        "lng": -122.377095
         ])
     var brewpub2 = JSON([
         "name": "Hale's Ales Brewery & Pub",
-        "lat": "47.659067",
-        "lng": "-122.365253"
+        "lat": 47.659067,
+        "lng": -122.365253
         ])
     var brewpub3 = JSON([
         "name": "Urban Family Brewing",
-        "lat": "47.660615",
-        "lng": "-122.39029"
+        "lat": 47.660615,
+        "lng": -122.39029
+        ])
+    var brewpub4 = JSON([
+        "name": "Rene BBC",
+        "lat": 47.660615,
+        "lng": -122.39029
         ])
     
     var jsonResponse: JSON = JSON([:])
-    jsonResponse["results"] = JSON([brewpub1, brewpub2, brewpub3])
+    jsonResponse["results"] = JSON([brewpub1, brewpub2, brewpub3, brewpub4])
     
     return try JSON(node: jsonResponse)
 }
@@ -120,9 +125,9 @@ drop.run()
 ````
 In Xcode, re-run the App.  Open your browser and navigate to [http://localhost:8080/brewpubs](http://localhost:8080/brewpubs).  You should see the JSON sent as a response.
 
-![icon](imgs/dirtyresponse.png)
+![icon](img/dirtyresponse.png)
 
-At this point, Play with routing with Vapor.  Here are some relevant sections of the docs to get started:
+At this point, play with routing with Vapor.  Here are some relevant sections of the docs to get started:
 
 * [Routing Basics](https://vapor.github.io/documentation/routing/parameters.html)
 * [Route Parameters](https://vapor.github.io/documentation/routing/parameters.html)
