@@ -108,9 +108,9 @@ drop.get("brewpubs") { req in
         "lng": -122.39029
         ])
     var brewpub4 = JSON([
-        "name": "Rene BBC",
-        "lat": 47.660615,
-        "lng": -122.39029
+        "name": "Ballard Beer Company",
+        "lat": 47.668843,
+        "lng": -122.38427
         ])
     
     var jsonResponse: JSON = JSON([:])
