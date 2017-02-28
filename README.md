@@ -229,7 +229,7 @@ Start Postgresql with:
 brew services start postgresql
 ````
 
-If you prefer to work with PostgreSQL with a database GUI, then install [PgAdmin](https://www.pgadmin.org/download/macos4.php).  This tutorial will use PgAdmin.p
+If you prefer to work with PostgreSQL using a database GUI, then install [PgAdmin](https://www.pgadmin.org/download/macos4.php).  This quick-start will use PgAdmin.
 
 ##### Step 2: Create a Beer Database and BrewPub Table in Postgresql
 
