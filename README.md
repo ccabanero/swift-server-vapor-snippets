@@ -1,4 +1,4 @@
-# Server Side Swift with Vapor
+# Server Side Swift
 
 Server Side __Swift__ code snippets using __Vapor__.
 
@@ -15,7 +15,7 @@ Open Terminal and verfiy the Xcode install with:
 curl -sL check.vapor.sh | bash
 ````
 
-We will use the Vapor Command Line Interface called __Toolbox__ to create and manage our Swift Server projects that are powered by Vapor.  
+We will use the Vapor Command Line Interface called __Toolbox__ to create, manage, and deploy our Swift Server projects that are powered by Vapor.  
 
 In Terminal, install the Vapor Toolbox with:
 
@@ -72,7 +72,7 @@ Open a web browser and navigate to http://localhost:8080 . You should see it wor
 
 ![icon](img/works.png)
 
-##Get Your Feet Wet
+##Routing Basics
 
 In this section, we're going to send some static JSON through a URL (i.e. route).
 
@@ -83,59 +83,103 @@ import Vapor
 
 let drop = Droplet()
 
-drop.get { req in
+drop.get { request in
+    
     return try drop.view.make("welcome", [
-        "message": drop.localization[req.lang, "welcome", "title"]
+        "message": drop.localization[request.lang, "welcome", "title"]
         ])
 }
 
-// Add This ...
-drop.get("brewpubs") { req in
+// handles GET /welcome
+drop.get("welcome") { request in
+    
+    return "sup"
+}
+
+// handles GET /brewpub/list
+drop.get("brewpub/list") { request in
     
     var brewpub1 = JSON([
+        "id": 1,
         "name": "Peddler Brewing Company",
         "lat": 47.663870,
         "lng": -122.377095
         ])
     var brewpub2 = JSON([
+        "id": 2,
         "name": "Hale's Ales Brewery & Pub",
         "lat": 47.659067,
         "lng": -122.365253
         ])
     var brewpub3 = JSON([
+        "id": 3,
         "name": "Urban Family Brewing",
         "lat": 47.660615,
         "lng": -122.39029
         ])
     var brewpub4 = JSON([
+        "id": 4,
         "name": "Ballard Beer Company",
         "lat": 47.668843,
         "lng": -122.38427
         ])
     
-    var jsonResponse: JSON = JSON([:])
+    var jsonResponse = JSON([:])
     jsonResponse["results"] = JSON([brewpub1, brewpub2, brewpub3, brewpub4])
     
     return try JSON(node: jsonResponse)
+}
+
+// handles GET /brewpub/id (e.g. /brewpub/1)
+drop.get("brewpub", Int.self) { request, id in
+    
+    return "Fetching brewpub with id \(id)"
+}
+
+// handles POST /brewpub
+drop.post("brewpub") { request in
+    
+    guard let name = request.data["name"]?.string else {
+        throw Abort.badRequest
+    }
+    guard let lat = request.data["lat"]?.double else {
+        throw Abort.badRequest
+    }
+    guard let lng = request.data["lng"]?.double else {
+        throw Abort.badRequest
+    }
+    
+    return "We go tyour POST with name = \(name), latitude = \(lat), and longitude = \(lng)"
 }
 
 drop.resource("posts", PostController())
 
 drop.run()
 ````
-In Xcode, re-run the App.  Open your browser and navigate to [http://localhost:8080/brewpubs](http://localhost:8080/brewpubs).  You should see the JSON sent as a response.
+In Xcode, run the App.  
 
-![icon](img/dirtyresponse.png)
+Using your favorite HTTP client (e.g. web browser, [RESTed](https://itunes.apple.com/us/app/rested-simple-http-requests/id421879749?mt=12), [Postman](https://www.getpostman.com)), view the responses from the different routes. 
 
-At this point, play with routing with Vapor.  Here are some relevant sections of the docs to get started:
+When we GET request __http://localhost:8080/brewpub/list__ we see the JSON response of brewpubs (see below):
+![icon](img/basics_list.png)
 
-* [Routing Basics](https://vapor.github.io/documentation/routing/parameters.html)
+When we GET request __http://localhost:8080/brewpub/1__ we see a message that processes the input Id (i.e. integer of 1).  Note, in a future section we will use this Id to look up a brewpub from the database and return that brewpub's data in a JSON response.
+![icon](img/basics_getint.png)
+
+When we POST request __http://localhost:8080/brewpub/1__ we see a message that processes the passed in parameters.  Note, in a future section we will use the input parameter data to create a new brew pub record in the database and return a success message in the response.
+![icon](img/basics_post.png)
+
+At this point, play with Routing with Vapor.  Here are some relevant sections of the docs to get started:
+
+* [Routing Basics](https://vapor.github.io/documentation/routing/basic.html)
 * [Route Parameters](https://vapor.github.io/documentation/routing/parameters.html)
 * [Query Parameters](https://vapor.github.io/documentation/routing/query-parameters.html)
 
-##Create a RESTful Web Service
+##Create an API
 
-In this section we are going to create a RESTful web service that will allow client Apps (iOS, Android, or Web) to fetch a collection of Brew Pubs in Seattle, WA.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
+In this section we are going to create a RESTful web service that will allow client Apps (iOS, Android, or Web) to fetch a collection of Brew Pubs in Seattle, WA.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  
+
+The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
 
 ##### Step 1: Create a BrewPub Model
 
@@ -149,7 +193,7 @@ In this section we are going to create a RESTful web service that will allow cli
 
 *In Progress*
 
-##Deploy the Swift Server Project to Heroku
+##Deploy to Cloud Service
 
 You can deploy your Vapor-powered Swift Server to many cloud services.  In this section we use Heroku.
 
@@ -169,7 +213,7 @@ Then, confirm the Homebrew installation with:
 brew help
 ````
 
-Now, install the [Heroku Command Line Interface (CLI)](https://devcenter.heroku.com/articles/heroku-cli)
+Now, install the [Heroku Command Line Interface (CLI)](https://devcenter.heroku.com/articles/heroku-cli) with:
 
 ````
 brew install heroku
@@ -180,9 +224,7 @@ Then, confirm the Heroku CLI installation with:
 heroku --version
 ````
 
-####Step 3: Use Vapor to Deploy to Heroku
-
-In Terminal, use the Heroku CLI to login with:
+#####Step 3: Deploy to Heroku
 
 If your Vapor project is not yet under source control, create a local git repository for it using the following in Terminal:
 
@@ -206,9 +248,9 @@ Next, deploy your Vapor app to Heroku with the following:
 vapor heroku init
 ````
 
-You will be prompted for providing an Heroku App Name.  After providing a unique name, it will provide you with your App's URL.  Proceed by answering the rest of the prompts.
+Answer all the prompts (e.g. App Name). 
 
-Over time, you will maintain the code in your Vapor project. To upload changes made to your code back up to Heroku do the following:
+Over time, you will maintain the code in your Vapor project. To upload your changes made back up to Heroku do the following:
 
 ````
 git commit -A
@@ -216,7 +258,17 @@ git commit -m 'a message about your commit'
 git push heroku master
 ````
 
-That's all there is to it!!! :)
+##Use the Published BrewPub API in Client Apps
+
+*iOS In Progress*
+
+*watchOS In Progress*
+
+*tvOS In Progress*
+
+*Android In Progress*
+
+*Web In Progress*
 
 ##Connect
 
