@@ -183,13 +183,16 @@ The data will be persisted in a PostgreSQL database.  We will debug/develop loca
 
 ##### Step 1: Install PostgreSQL
 
-In Terminal, first install [Homebrew](https://brew.sh) with:
+We will install PostgreSQL on our Mac using Homebrew.  
+
+If you *don't* have Homebrew, use Terminal to install [Homebrew](https://brew.sh) with:
 
 ````
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ````
 
-Then, update
+If you *do* have Homebrew installed on your Mac, then its a good practice to always update before installing anything with:
+
 ````
 brew update
 ````
@@ -198,6 +201,18 @@ Then, confirm the Homebrew installation with:
 
 ````
 brew help
+````
+
+Install PostgreSQL with:
+
+````
+brew install postgresql
+````
+
+If this is your first install, create a database with:
+
+````
+initdb /usr/local/var/postgres -E utf8
 ````
 
  
