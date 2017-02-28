@@ -166,7 +166,7 @@ When we GET request __http://localhost:8080/brewpub/list__ we see the JSON respo
 When we GET request __http://localhost:8080/brewpub/1__ we see a message that processes the input Id (i.e. integer of 1).  Note, in a future section we will use this Id to look up a brewpub from the database and return that brewpub's data in a JSON response.
 ![icon](img/basics_getint.png)
 
-When we POST request __http://localhost:8080/brewpub/1__ we see a message that processes the passed in parameters.  Note, in a future section we will use the input parameter data to create a new brew pub record in the database and return a success message in the response.
+When we POST request __http://localhost:8080/brewpub/1__ we see a message that processes the passed in parameters.  Note, in a future section we will use the input parameter data to create a new brew pub record in the database and return a status message (e.g. success) in the response.
 ![icon](img/basics_post.png)
 
 At this point, play with Routing with Vapor.  Here are some relevant sections of the docs to get started:
@@ -181,15 +181,31 @@ In this section we are going to create a RESTful web service that will allow cli
 
 The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
 
-##### Step 1: Create a BrewPub Model
+##### Step 1: Install PostgreSQL
+
+In Terminal, first install [Homebrew](https://brew.sh) with:
+
+````
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+````
+
+Then, update
+````
+brew update
+````
+
+Then, confirm the Homebrew installation with:
+
+````
+brew help
+````
+
+ 
+##### Step 2: Create a BrewPub Model
 
 *In Progress*
 
-##### Step 2: Create a BrewPub Route
-
-*In Progress*
-
-##### Step 3: Consume the BrewPub endpoint in client App(s)
+##### Step 3: Create the BrewPub Routes
 
 *In Progress*
 
@@ -200,18 +216,6 @@ You can deploy your Vapor-powered Swift Server to many cloud services.  In this 
 #####Step 1: Sign Up for [Free Heroku Account here](https://www.heroku.com)
 
 #####Step 2: Install the Heroku Command Line Interface (CLI)
-
-In Terminal, first install [Homebrew](https://brew.sh) with:
-
-````
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-````
-
-Then, confirm the Homebrew installation with:
-
-````
-brew help
-````
 
 Now, install the [Heroku Command Line Interface (CLI)](https://devcenter.heroku.com/articles/heroku-cli) with:
 
