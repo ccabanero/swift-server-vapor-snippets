@@ -74,7 +74,7 @@ Open a web browser and navigate to http://localhost:8080 . You should see it wor
 
 ##Routing Basics
 
-In this section, we're going to send some static JSON through a route.  Along the way we'll learn some routing basics such as how to handle simple GET and POST requests.
+In this section, we're going to learn how to author simple GET and POST requests using Vapor routing.  In the next section, we'll use a database to persist and fetch this same data instead of using static JSON. 
 
 In Xcode, navigate to /Sources/App/Main.swift and edit it as:
 
@@ -397,7 +397,10 @@ do {
     assertionFailure("Error adding provider: \(error)")
 }
 
-// handles POST /brewpub
+/**
+  handles POST /brewpub
+  Allows users to create a new brewpub
+ */
 drop.post("brewpub") { request in
     
     // fetch parameters sent with POST
@@ -420,13 +423,19 @@ drop.post("brewpub") { request in
     return try JSON(node: brewpub.makeNode())
 }
 
-// handles GET /brewpub/list
+/**
+  handles GET /brewpub/list
+  Allows users to fetch a collection of brewpub resources
+ */
 drop.get("brewpub/list") { request in
     
     return try JSON(node: Brewpub.all().makeNode())
 }
 
-// handles GET /brewpub/id (e.g. /brewpub/1)
+/**
+  handles GET /brewpub/id (int)
+  Allows clients to fetch a brewpub by identifier (e.g. /brewpub/1)
+ */
 drop.get("brewpub", Int.self) { request, id in
     
     return try JSON(node: Brewpub.query().filter("id", id).all().makeNode())
@@ -494,10 +503,10 @@ vapor heroku init
 
 You will be prompted with several question.  When asked the final question *Would you like to push to Heroku now?* answer __n__ for NO.
 
-Then, instruct Heroku to create a database with:
+Then, instruct Heroku to create a free (hobby) development database with:
 
 ````
-heroku addons:create heroku-postgresql:dev
+heroku addons:create heroku-postgresql:hobby-dev
 ````
 
 Then fetch the __database url__ for the created database with:
@@ -506,23 +515,29 @@ Then fetch the __database url__ for the created database with:
 heroku config
 ````
 
-Copy the database url and add it to the PROC
+The Database URL will be presented and will resemble:
+
+````
+DATABASE_URL: postgres://zrgyqqyqvwrrgi:e1.compute-1.amazonaws.com:543if
+````
+
+
+Edit the Procfile located in your project's root directory with:
 
 `````
 nano Procfile
 
 `````
 
-In the Procile, pass the database URL so that Vapor
+Add the Heroku database url variable and save the changes to the Procfile.  Your Procfile should look like the following:
 
 ````
-
 web: App --env=production --workdir="./"
 web: App --env=production --workdir=./ --config:servers.default.port=$PORT --config:postgresql.url=$DATABASE_URL
 
 ````
 
-Over time, you will maintain the code in your Vapor project. To upload your changes made back up to Heroku do the following:
+Upload your changes back up to Heroku do the following:
 
 ````
 git commit -A
@@ -530,7 +545,7 @@ git commit -m 'a message about your commit'
 git push heroku master
 ````
 
-That's all there is to it!
+That's all there is to it!  
 
 ##Connect
 
