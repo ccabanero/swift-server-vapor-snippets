@@ -177,9 +177,9 @@ At this point, play with Routing with Vapor.  Here are some relevant sections of
 
 ##Create an API
 
-In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  Being a RESTful web service, we will be able to consume this data in multiple platforms such as Apple (iOS, watchOS, tvOS, macOS), Android apps, and Web apps.
+In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the final section we will deploy this to a Cloud service (e.g. Heroku).
 
-The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the final section we will deploy this to a Cloud service (e.g. Heroku).
+Being a RESTful web service, we will be able to consume this data in multiple platforms such as Apple (iOS, watchOS, tvOS, macOS), Android apps, and Web apps.
 
 #### Step 1: Install PostgreSQL on macOS
 
