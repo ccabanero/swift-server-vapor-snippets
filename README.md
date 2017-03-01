@@ -1,6 +1,6 @@
 # Server Side Swift
 
-Server Side __Swift__ code snippets using __Vapor__.
+Server Side __Swift__ code snippets using __Vapor__. 
 
 ![icon](img/vapor.png)
 
@@ -149,7 +149,7 @@ drop.post("brewpub") { request in
         throw Abort.badRequest
     }
     
-    return "We go tyour POST with name = \(name), latitude = \(lat), and longitude = \(lng)"
+    return "We got your POST with name = \(name), latitude = \(lat), and longitude = \(lng)"
 }
 
 drop.resource("posts", PostController())
@@ -197,7 +197,7 @@ If you *do* have Homebrew installed on your Mac, then its a good practice to alw
 brew update
 ````
 
-Then, confirm the Homebrew installation with:
+Then, verify the Homebrew installation with:
 
 ````
 brew help
@@ -231,43 +231,165 @@ brew services start postgresql
 
 If you prefer to work with PostgreSQL using a database GUI, then install [PgAdmin](https://www.pgadmin.org/download/macos4.php).  This quick-start will use PgAdmin.
 
-#### Step 2: Create a Beer Database and BrewPub Table in Postgresql
-
-
 Open pgAdmin, create a server and connect with:
 
 * host: localhost 
 * user name: postgres
 
-Create a __beer__ database:
+Create a __beer__ database. Your pgAdmin UI should resemble the following:
+
+![icon](img/createdb.png)
+
+
+#### Step 2: Configure the Vapor Project to Connect to your PostgreSQL Database
+
+In Xcode, edit the __Package.swift__ file to add the PostgreSQL provider for Vapor as a dependency.  See below:
 
 ````
-CREATE DATABASE beer
-    WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-````
+import PackageDescription
 
-Create a __brewpubs__ table:
-
-````
-CREATE TABLE public.brewpubs
-(
-    id bigint,
-    name text,
-    lat double precision,
-    lng double precision,
-    PRIMARY KEY (id)
+let package = Package(
+    name: "swiftserver",
+    dependencies: [
+        .Package(url: "https://github.com/vapor/vapor.git", majorVersion: 1, minor: 5),
+        .Package(url: "https://github.com/vapor/postgresql-provider", majorVersion: 1, minor: 0)
+    ],
+    exclude: [
+        "Config",
+        "Database",
+        "Localization",
+        "Public",
+        "Resources",
+    ]
 )
+
 ````
 
-Your pgAdmin UI should resemble the following:
+After saving changes to the Package.swift file have Vapor re-build and re-create the Xcode project.  This will download the new dependencies.
 
-![icon](img/pgadmintable.png)
+````
+vapor xcode
+````
+
+In Xcode, edit the /Sources/App/main.swift file to:
+
+* Add an import VaporPostgreSQL statement.
+* Add a provider to the Droplet instance.
+* Create a new route that will test connecting to your local development database and responding with the PostgreSQL version.  See below:
+
+````
+import Vapor
+import VaporPostgreSQL // ADDED
+
+let drop = Droplet()
+try drop.addProvider(VaporPostgreSQL.Provider.self) //ADDED
+
+// ADDED route
+drop.get("version") { request in
+    
+    if let db = drop.database?.driver as? PostgreSQLDriver {
+        let version = try db.raw("SELECT version()")
+        return try JSON(node: version)
+    }
+    else {
+        return "No db connection"
+    }
+}
+
+// handles GET /welcome
+drop.get("welcome") { request in
+    
+    return "sup"
+}
+...
+
+````
+
+In your Xcode project, create a __secrets__ folder under the /Config folder.
+
+In the secrets folder, add the following configuration file so that the app can connect to your local PostgreSQL database.  See below:
+
+![icon](img/postgresconfig.png) 
+
+Run Xcode, use a HTTP client (e.g. RESTed) to confirm the Vapor Project can connect to your PostgreSQL database.
+
+![icon](img/dbversionroute.png)
 
 #### Step 3: Create a BrewPub Model
 
-*In Progress*
+Create a new BrewPub.swift file and add it to /Sources/App/Models
+
+Implement the BrewPub model.  Note that this model class must conform to the Model, NodeInitializable, NodeRepresentable, and Preparation protocols. See below:
+
+````
+import Foundation
+import Vapor
+
+final class BrewPub: Model {
+    
+    // required by Model protocol
+    var id: Node?
+    var exists: Bool = false
+    
+    var name: String
+    var latitude: Double
+    var longitude: Double
+    
+    // convenience initializer
+    init(name: String, latitude: Double, longitude: Double) {
+        self.id = nil
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+    
+    // required by NodeInitializable protocol
+    init(node: Node, in context: Context) throws {
+    
+        id = try node.extract("id")
+        name = try node.extract("name")
+        latitude = try node.extract("latitude")
+        longitude = try node.extract("longitude")
+    }
+    
+    // required by NodeRepresentable protocol
+    func makeNode(context: Context) throws -> Node {
+        return try Node(node: [
+            "id": id,
+            "name": String,
+            "latitude": Double,
+            "longitude": Double
+        ])
+    }
+    
+    // for creating the database table for this model
+    static func prepare(_ databse: Database) throws {
+        try database.create("brewpubs") { pubs in
+            pubs.id()
+            pubs.string("name")
+            pubs.double("latitude")
+            pubs.double("longitude")
+        }
+    }
+    
+    // for deleting the database table
+    static func revert(_ database: Database) throws {
+        try database.delete("brewpubs")
+    }
+}
+````
+After implementing a model class, update the Droplet instance preparatiosn collection.  In /Sources/App/main.swift update as:
+
+````
+import Vapor
+import VaporPostgreSQL
+
+let drop = Droplet()
+drop.preparations.append(BrewPub.self) // ADDED
+try drop.addProvider(VaporPostgreSQL.Provider.self)
+
+````
+
 
 #### Step 4: Create the BrewPub Routes
 
