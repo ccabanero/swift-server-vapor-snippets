@@ -177,9 +177,9 @@ At this point, play with Routing with Vapor.  Here are some relevant sections of
 
 ##Create an API
 
-In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  Being a RESTful web service, we will later demonstrate how to consume this data in multiple platforms such as Apple (iOS, watchOS, tvOS, macOS), Android apps, and Web apps.
+In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  We'll refer to this as the BrewPub API.  Being a RESTful web service, we will be able to consume this data in multiple platforms such as Apple (iOS, watchOS, tvOS, macOS), Android apps, and Web apps.
 
-The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the next section we will deploy this to a Cloud service (e.g. Heroku).
+The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the final section we will deploy this to a Cloud service (e.g. Heroku).
 
 #### Step 1: Install PostgreSQL on macOS
 
@@ -197,12 +197,6 @@ If you *do* have Homebrew installed on your Mac, then its a good practice to alw
 brew update
 ````
 
-Then, verify the Homebrew installation with:
-
-````
-brew help
-````
-
 Install PostgreSQL with:
 
 ````
@@ -213,14 +207,6 @@ Create a new database cluster with:
 
 ````
 initdb /usr/local/var/postgres -E utf8
-````
-
-Create a postgres user:
-
-````
-/usr/local/Cellar/postgresql/<version>/bin/createuser -s postgres
-e.g.
-/usr/local/Cellar/postgresql/9.6.2/bin/createuser -s postgres
 ````
 
 Start Postgresql with:
@@ -234,7 +220,7 @@ If you prefer to work with PostgreSQL using a database GUI, then install [PgAdmi
 Open pgAdmin, create a server and connect with:
 
 * host: localhost 
-* user name: postgres
+* user name: [your macOS username]
 
 Create a __beer__ database. Your pgAdmin UI should resemble the following:
 
@@ -265,7 +251,7 @@ let package = Package(
 
 ````
 
-After saving changes to the Package.swift file have Vapor re-build and re-create the Xcode project.  This will download the new dependencies.
+After saving changes to the Package.swift file, have Vapor re-build and re-create the Xcode project.  This will download the new dependencies.
 
 ````
 vapor xcode
@@ -279,16 +265,20 @@ In Xcode, edit the /Sources/App/main.swift file to:
 
 ````
 import Vapor
-import VaporPostgreSQL // ADDED
+import VaporPostgreSQL
 
 let drop = Droplet()
-try drop.addProvider(VaporPostgreSQL.Provider.self) //ADDED
+do {
+    try drop.addProvider(VaporPostgreSQL.Provider.self)
+} catch {
+    assertionFailure("Error adding provider: \(error)")
+}
 
-// ADDED route
 drop.get("version") { request in
     
     if let db = drop.database?.driver as? PostgreSQLDriver {
-        let version = try db.raw("SELECT version()")
+        //let version = try db.raw("SELECT version()")
+        let version = try db.raw("select current_database();")
         return try JSON(node: version)
     }
     else {
@@ -296,18 +286,14 @@ drop.get("version") { request in
     }
 }
 
-// handles GET /welcome
-drop.get("welcome") { request in
-    
-    return "sup"
-}
+drop.run()
 ...
 
 ````
 
 In your Xcode project, create a __secrets__ folder under the /Config folder.
 
-In the secrets folder, add the following configuration file so that the app can connect to your local PostgreSQL database.  See below:
+In the secrets folder, add the following configuration file so that the app can connect to your local PostgreSQL database.  See below screenshot.  Note, change your user and password to your system/macOS credentials.
 
 ![icon](img/postgresconfig.png) 
 
@@ -317,15 +303,16 @@ Run Xcode, use a HTTP client (e.g. RESTed) to confirm the Vapor Project can conn
 
 #### Step 3: Create a BrewPub Model
 
-Create a new BrewPub.swift file and add it to /Sources/App/Models
+Create a new BrewPub.swift file and add it to /Sources/App/Models.
 
 Implement the BrewPub model.  Note that this model class must conform to the Model, NodeInitializable, NodeRepresentable, and Preparation protocols. See below:
 
 ````
 import Foundation
 import Vapor
+import Fluent
 
-final class BrewPub: Model {
+final class Brewpub: Model {
     
     // required by Model protocol
     var id: Node?
@@ -345,7 +332,7 @@ final class BrewPub: Model {
     
     // required by NodeInitializable protocol
     init(node: Node, in context: Context) throws {
-    
+        
         id = try node.extract("id")
         name = try node.extract("name")
         latitude = try node.extract("latitude")
@@ -354,16 +341,17 @@ final class BrewPub: Model {
     
     // required by NodeRepresentable protocol
     func makeNode(context: Context) throws -> Node {
+        
         return try Node(node: [
             "id": id,
-            "name": String,
-            "latitude": Double,
-            "longitude": Double
+            "name": name,
+            "latitude": latitude,
+            "longitude": longitude
         ])
     }
     
     // for creating the database table for this model
-    static func prepare(_ databse: Database) throws {
+    static func prepare(_ database: Database) throws {
         try database.create("brewpubs") { pubs in
             pubs.id()
             pubs.string("name")
@@ -385,17 +373,82 @@ import Vapor
 import VaporPostgreSQL
 
 let drop = Droplet()
-drop.preparations.append(BrewPub.self) // ADDED
-try drop.addProvider(VaporPostgreSQL.Provider.self)
+drop.preparations.append(Brewpub.self) // ADDED
+do {
+    try drop.addProvider(VaporPostgreSQL.Provider.self)
+} catch {
+    assertionFailure("Error adding provider: \(error)")
+}
 
 ````
 
 
-#### Step 4: Create the BrewPub Routes
+#### Step 4: Create the API Routes
 
-*In Progress*
+````
+import Vapor
+import VaporPostgreSQL
 
-##Deploy to Cloud Service
+let drop = Droplet()
+drop.preparations.append(Brewpub.self) // ADDED
+do {
+    try drop.addProvider(VaporPostgreSQL.Provider.self)
+} catch {
+    assertionFailure("Error adding provider: \(error)")
+}
+
+// handles POST /brewpub
+drop.post("brewpub") { request in
+    
+    // fetch parameters sent with POST
+    guard let name = request.data["name"]?.string else {
+        throw Abort.badRequest
+    }
+    guard let lat = request.data["lat"]?.double else {
+        throw Abort.badRequest
+    }
+    guard let lng = request.data["lng"]?.double else {
+        throw Abort.badRequest
+    }
+    
+    // create model instance
+    var brewpub = Brewpub(name: name, latitude: lat, longitude: lng)
+    
+    // save model to database
+    try brewpub.save()
+    
+    return try JSON(node: brewpub.makeNode())
+}
+
+// handles GET /brewpub/list
+drop.get("brewpub/list") { request in
+    
+    return try JSON(node: Brewpub.all().makeNode())
+}
+
+// handles GET /brewpub/id (e.g. /brewpub/1)
+drop.get("brewpub", Int.self) { request, id in
+    
+    return try JSON(node: Brewpub.query().filter("id", id).all().makeNode())
+}
+
+drop.run()
+````
+
+Note, as you iterate your data model and routes you can use:
+
+````
+vapor build --clean
+
+vapor run prepare --revert
+````
+
+When your routes are complete, use your HTTP client (e.g. RESTed) to test and use pgAdmin to confirm rows are being inserted into your database. 
+
+*In Progress - Add Unit Tests for routes*
+
+
+##Deploy to a Cloud Service
 
 You can deploy your Vapor-powered Swift Server to many cloud services.  In this section we use Heroku.
 
@@ -448,17 +501,7 @@ git commit -m 'a message about your commit'
 git push heroku master
 ````
 
-##Use the Published BrewPub API in Client Apps
-
-*iOS In Progress*
-
-*watchOS In Progress*
-
-*tvOS In Progress*
-
-*Android In Progress*
-
-*Web In Progress*
+That's all there is to it!
 
 ##Connect
 
