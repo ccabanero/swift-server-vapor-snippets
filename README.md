@@ -459,6 +459,7 @@ You can deploy your Vapor-powered Swift Server to many cloud services.  In this 
 Now, install the [Heroku Command Line Interface (CLI)](https://devcenter.heroku.com/articles/heroku-cli) with:
 
 ````
+brew update
 brew install heroku
 ````
 Then, confirm the Heroku CLI installation with:
@@ -491,7 +492,35 @@ Next, deploy your Vapor app to Heroku with the following:
 vapor heroku init
 ````
 
-Answer all the prompts (e.g. App Name). 
+You will be prompted with several question.  When asked the final question *Would you like to push to Heroku now?* answer __n__ for NO.
+
+Then, instruct Heroku to create a database with:
+
+````
+heroku addons:create heroku-postgresql:dev
+````
+
+Then fetch the __database url__ for the created database with:
+
+````
+heroku config
+````
+
+Copy the database url and add it to the PROC
+
+`````
+nano Procfile
+
+`````
+
+In the Procile, pass the database URL so that Vapor
+
+````
+
+web: App --env=production --workdir="./"
+web: App --env=production --workdir=./ --config:servers.default.port=$PORT --config:postgresql.url=$DATABASE_URL
+
+````
 
 Over time, you will maintain the code in your Vapor project. To upload your changes made back up to Heroku do the following:
 
