@@ -456,6 +456,62 @@ When your routes are complete, use your HTTP client (e.g. RESTed) to test and us
 
 *In Progress - Add Unit Tests for routes*
 
+##Enable CORS
+
+This is an optional task if you'd like to allow access to your API from __web__ apps that are deployed to a web server that is different from your API.
+
+Add the [CORS Middleware for Vapor](https://github.com/jhonny-me/CorsMiddleware) as a dependency:
+
+````
+import PackageDescription
+
+let package = Package(
+    name: "swiftserver",
+    dependencies: [
+        .Package(url: "https://github.com/vapor/vapor.git", majorVersion: 1, minor: 5),
+        .Package(url: "https://github.com/vapor/postgresql-provider", majorVersion: 1, minor: 0),
+        .Package(url: "https://github.com/jhonny-me/CorsMiddleware.git", majorVersion: 1, minor: 0)
+    ], ...
+````
+
+Add the middleware to your Droplet instance:
+
+````
+let drop = Droplet(availableMiddleware: ["cors" :CorsMiddleware()])
+````
+
+Update In Config/droplet.json, add "cors" to the middleware server collection:
+
+````
+{
+    "server": "engine",
+    "client": "engine",
+    "console": "terminal",
+    "log": "console",
+    "hash": "crypto",
+    "cipher": "crypto",
+    "middleware": {
+        "server": [
+            "file",
+            "abort",
+            "validation",
+            "type-safe",
+            "date",
+            "sessions",
+            "cors"
+        ],
+        "client": [
+        
+        ]
+    }
+}
+````
+
+Because we updated the Package.swift file, re-create your Xcode project.
+
+````
+vapor xcode
+````
 
 ##Deploy to a Cloud Service
 
