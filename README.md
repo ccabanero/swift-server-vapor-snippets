@@ -5,7 +5,7 @@ Server Side __Swift__ code snippets using __Vapor__.
 ![icon](img/vapor.png)
 
 
-##Setup your Development Environment
+## Setup your Development Environment
 
 On macOS, download Xcode 8.  We will use Swift 3, the latest Swift Package Manager, and the IDE that comes with Xcode.
 
@@ -35,7 +35,7 @@ Then tell the Vapor Toolbox it should update itself in the future with:
 vapor self update
 ````
 
-##Create a New Vapor Project
+## Create a New Vapor Project
 
 In Terminal, use Toolbox to create a new Vapor Project called 'swiftserver' with:
 
@@ -72,7 +72,7 @@ Open a web browser and navigate to http://localhost:8080 . You should see it wor
 
 ![icon](img/works.png)
 
-##Routing Basics
+## Routing Basics
 
 In this section, we're going to learn how to author simple GET and POST requests using Vapor routing.  In the next section, we'll use a database to persist and fetch this same data instead of using static JSON. 
 
@@ -175,7 +175,7 @@ At this point, play with Routing with Vapor.  Here are some relevant sections of
 * [Route Parameters](https://vapor.github.io/documentation/routing/parameters.html)
 * [Query Parameters](https://vapor.github.io/documentation/routing/query-parameters.html)
 
-##Create an API
+## Create an API
 
 In this section we are going to create a RESTful web service that will allow client Apps to fetch a collection of Brew Pubs.  We will also allow our client Apps to create new Brew Pubs and update existing ones.  The data will be persisted in a PostgreSQL database.  We will debug/develop locally.  In the final section we will deploy this to a Cloud service (e.g. Heroku).
 
@@ -456,7 +456,7 @@ When your routes are complete, use your HTTP client (e.g. RESTed) to test and us
 
 *In Progress - Add Unit Tests for routes*
 
-##Enable CORS
+## Enable CORS
 
 This is an optional task if you'd like to allow access to your API from __web__ apps that are deployed to a web server that is different from your API.
 
@@ -513,7 +513,7 @@ Because we updated the Package.swift file, re-create your Xcode project.
 vapor xcode
 ````
 
-##Deploy to a Cloud Service
+## Deploy to a Cloud Service
 
 You can deploy your Vapor-powered Swift Server to many cloud services.  In this section we use Heroku.
 
@@ -603,7 +603,7 @@ git push heroku master
 
 That's all there is to it!  
 
-##Connect
+## Connect
 
 * Twitter: [@clintcabanero](http://twitter.com/clintcabanero)
 * GitHub: [ccabanero](http:///github.com/ccabanero)
